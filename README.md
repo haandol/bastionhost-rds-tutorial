@@ -27,6 +27,14 @@ $ cdk init
 $ cdk bootstrap
 ```
 
+Replace allowing CIDR block with your CIDR block at **bastion-stack.ts**
+
+```typescript
+const Config = {
+  ingressCIDR: '211.193.59.247/32', <-- replace it.
+};
+```
+
 Deploy CDK Stacks on AWS
 
 ```bash
