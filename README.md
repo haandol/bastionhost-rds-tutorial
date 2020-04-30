@@ -92,8 +92,17 @@ Done! [BastionHost] <==> [Localhost] connection is made now.
 
 ## Connect to RDS PostgresQL via localhost:5432
 
-> AWS SSM connection does not support multi connection which means that only one person can connect to RDS via SSM at the same time.
+### Get RDS connection password
+
+Get your RDB credential from `AWS Secrets Manager` Service. Visit *AWS Secrets Manager* service and click *Retrieve secret value* button.
+
+*AWS Secrets Manager* is highly secured key-value store.
+
+By using AWS Secrets Manager, you can get rid of hardcoded RDS related information from your code.
+
+### Connect to RDS through localhost:5432
 
 connect to *localhost:5432* with your preferred pgdb client, like PgAdmin4, DBeaver.
 
 > If you are using DBeaver, you should turn off the settings `Open separate connection for metadata read` at *DBeaver -> Metadata* menu.
+> AWS SSM connection does not support multi connection which means that only one person can connect to RDS via SSM at the same time.
