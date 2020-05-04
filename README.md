@@ -27,12 +27,15 @@ $ cdk init
 $ cdk bootstrap
 ```
 
-Replace allowing CIDR block with your CIDR block at **bastion-stack.ts**
+Replace allowing *ingressCIDR* with your public CIDR block at [**bin/infra.ts**](bin/infra.ts)
 
 ```typescript
-const Config = {
-  ingressCIDR: '211.193.59.247/32', <-- replace it.
-};
+const app = new cdk.App({
+  context: {
+    ns,
+    ingressCIDR: '211.193.59.247/32', <-- replace it.
+  },
+});
 ```
 
 Deploy CDK Stacks on AWS
@@ -94,7 +97,7 @@ Done! [BastionHost] <==> [Localhost] connection is made now.
 
 ### Get RDS connection password
 
-Get your RDB credential from `AWS Secrets Manager` Service. Visit *AWS Secrets Manager* service and click *Retrieve secret value* button.
+Get your RDS credential from `AWS Secrets Manager` Service. Visit *AWS Secrets Manager* service and click *Retrieve secret value* button.
 
 *AWS Secrets Manager* is highly secured key-value store.
 

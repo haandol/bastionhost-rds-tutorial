@@ -7,7 +7,10 @@ import { BastionHostStack } from '../lib/bastion-stack';
 
 const ns = 'Alpha';
 const app = new cdk.App({
-  context: { ns },
+  context: {
+    ns,
+    ingressCIDR: '211.193.59.247/32',
+  },
 });
 
 const vpcStack = new VpcStack(app, `VpcStack${ns}`);

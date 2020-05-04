@@ -5,21 +5,19 @@ interface Props {
   vpc: ec2.Vpc;
 }
 
-const Config = {
-  ingressCIDR: '211.193.59.247/32',
-};
-
 export class BastionHostStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: Props) {
     super(scope, id);
 
     const ns = scope.node.tryGetContext('ns') || '';
+    const ingressCIDR = scope.node.tryGetContext('ingressCIDR') || '';
+    if (ingressCIDR.length === 0) throw Error('ingressCIDR must be provided');
 
     const bastionHost = new ec2.BastionHostLinux(this, `BastionHost${ns}`, {
       vpc: props.vpc,
       instanceName: `BastionHost${ns}`,
     });
-    bastionHost.allowSshAccessFrom(ec2.Peer.ipv4(Config.ingressCIDR));
+    bastionHost.allowSshAccessFrom(ec2.Peer.ipv4(ingressCIDR));
   }
 
 }
