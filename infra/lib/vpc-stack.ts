@@ -9,7 +9,7 @@ export class VpcStack extends cdk.Stack {
 
     const ns = scope.node.tryGetContext('ns') || '';
 
-    this.vpc = new ec2.Vpc(this, `Vpc${ns}`, { maxAzs: 2 });
+    this.vpc = new ec2.Vpc(this, `Vpc${ns}`, { maxAzs: 1 });
   }
 
 }
