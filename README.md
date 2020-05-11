@@ -115,7 +115,7 @@ Install dependencies for sample app.
 $ pip install psycopg2-binary boto3 -U
 ```
 
-Here is sameple code..
+Here is sample code..
 
 ```python
 import json
