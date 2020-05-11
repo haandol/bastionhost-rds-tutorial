@@ -111,7 +111,12 @@ connect to *localhost:5432* with your preferred pgdb client, like PgAdmin4, DBea
 > and turn off the settings `Open separate conneciton for each editor` at *DBeaver -> SQL Editor* menu.
 > AWS SSM connection does not support multi connection which means that only one person can connect to RDS via SSM at the same time.
 
-Here is sameple code..
+Install dependencies for sample app.
+```bash
+$ pip install psycopg2-binary boto3 -U
+```
+
+Here is sample code..
 
 ```python
 import json
