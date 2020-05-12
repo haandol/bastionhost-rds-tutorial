@@ -2,7 +2,7 @@
 
 This repository is for tutorial of RDS tunneling with AWS BastionHost.
 
-**Running this repository may cost your AWS Account.**
+**Running this repository may cost you to provision AWS resources**
 
 # Prerequisites
 
