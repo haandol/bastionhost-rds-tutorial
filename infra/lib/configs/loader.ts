@@ -6,13 +6,13 @@ import { VpcValidator } from './validators';
 interface IConfig {
   Ns: string;
   Stage: string;
+  VpcId: string;
+  IngressCIDR: string;
+  DatabaseName: string;
   AWS: {
     Account: string;
     Region: string;
   };
-  VpcId: string;
-  IngressCIDR: string;
-  DatabaseName: string;
 }
 
 dotenv.config({
@@ -25,11 +25,11 @@ const schema = joi
   .object({
     NS: joi.string().required(),
     STAGE: joi.string().required(),
-    AWS_ACCOUNT_ID: joi.number().required(),
-    AWS_REGION: joi.string().required(),
     VPC_ID: joi.string().custom(VpcValidator).required(),
     INGRESS_CIDR: joi.string().required(),
     DATABASE_NAME: joi.string().required(),
+    AWS_ACCOUNT_ID: joi.number().required(),
+    AWS_REGION: joi.string().required(),
   })
   .unknown();
 
@@ -42,11 +42,11 @@ if (error) {
 export const Config: IConfig = {
   Ns: `${envVars.NS}${envVars.STAGE}`,
   Stage: envVars.STAGE,
+  VpcId: envVars.VPC_ID,
+  IngressCIDR: envVars.INGRESS_CIDR,
+  DatabaseName: envVars.DATABASE_NAME,
   AWS: {
     Account: `${envVars.AWS_ACCOUNT_ID}`,
     Region: envVars.AWS_REGION,
   },
-  VpcId: envVars.VPC_ID,
-  IngressCIDR: envVars.INGRESS_CIDR,
-  DatabaseName: envVars.DATABASE_NAME,
 };
