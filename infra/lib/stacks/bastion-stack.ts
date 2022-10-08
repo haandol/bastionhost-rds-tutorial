@@ -6,28 +6,14 @@ import { Config } from '../configs/loader';
 interface IProps extends StackProps {
   vpc: ec2.IVpc;
   ingressCIDR: string;
+  securityGroup: ec2.ISecurityGroup;
 }
 
 export class BastionHostStack extends Stack {
   constructor(scope: Construct, id: string, props: IProps) {
     super(scope, id, props);
 
-    const securityGroup = new ec2.SecurityGroup(
-      this,
-      `BastionHostSecurityGroup`,
-      {
-        vpc: props.vpc,
-        securityGroupName: `${Config.Ns}BastionHostSG`,
-      }
-    );
-    securityGroup.connections.allowInternally(ec2.Port.allTraffic(), 'self');
-    securityGroup.connections.allowFrom(
-      ec2.Peer.ipv4(props.ingressCIDR),
-      ec2.Port.tcp(22),
-      'SSH'
-    );
-
-    new ec2.BastionHostLinux(this, `BastionHost`, {
+    const host = new ec2.BastionHostLinux(this, `BastionHost`, {
       vpc: props.vpc,
       subnetSelection: {
         subnetType: ec2.SubnetType.PUBLIC,
@@ -44,11 +30,11 @@ export class BastionHostStack extends Stack {
         },
       ],
       instanceName: `${Config.Ns}BastionHost`,
-      securityGroup,
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.T3,
         ec2.InstanceSize.MEDIUM
       ),
     });
+    host.connections.addSecurityGroup(props.securityGroup);
   }
 }

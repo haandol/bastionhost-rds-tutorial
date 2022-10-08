@@ -10,7 +10,18 @@ const app = new cdk.App();
 
 const vpcStack = new VpcStack(app, `${Config.Ns}VpcStack`, {
   vpcId: Config.VpcId,
+  env: {
+    account: Config.AWS.Account,
+    region: Config.AWS.Region,
+  },
 });
+
+const dbStack = new RdsStack(app, `${Config.Ns}DbStack`, {
+  vpc: vpcStack.vpc,
+  defaultDatabaseName: Config.DatabaseName,
+  enableBinlog: true,
+});
+dbStack.addDependency(vpcStack);
 
 const bastionHostStack = new BastionHostStack(
   app,
@@ -18,15 +29,10 @@ const bastionHostStack = new BastionHostStack(
   {
     vpc: vpcStack.vpc,
     ingressCIDR: Config.IngressCIDR,
+    securityGroup: dbStack.securityGroup,
   }
 );
-bastionHostStack.addDependency(vpcStack);
-
-const dbStack = new RdsStack(app, `${Config.Ns}DbStack`, {
-  vpc: vpcStack.vpc,
-  defaultDatabaseName: Config.DatabaseName,
-});
-dbStack.addDependency(vpcStack);
+bastionHostStack.addDependency(dbStack);
 
 const tags = cdk.Tags.of(app);
 tags.add(`namespace`, Config.Ns);
