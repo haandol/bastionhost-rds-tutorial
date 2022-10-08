@@ -1,26 +1,29 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
-import * as cdk from '@aws-cdk/core';
-import { VpcStack } from '../lib/vpc-stack';
-import { RdsStack } from '../lib/rds-stack';
-import { BastionHostStack } from '../lib/bastion-stack';
+import * as cdk from 'aws-cdk-lib';
+import { VpcStack } from '../lib/stacks/vpc-stack';
+import { RdsStack } from '../lib/stacks/rds-stack';
+import { BastionHostStack } from '../lib/stacks/bastion-stack';
+import { Config } from '../lib/configs/loader';
 
-const ns = 'Alpha';
-const app = new cdk.App({
-  context: {
-    ns,
-    ingressCIDR: '211.193.59.247/32',
-  },
+const app = new cdk.App();
+
+const vpcStack = new VpcStack(app, `${Config.Ns}VpcStack`, {
+  vpcId: Config.VpcId,
 });
 
-const vpcStack = new VpcStack(app, `VpcStack${ns}`);
-
-const bastionHostStack = new BastionHostStack(app, `BastionHostStack${ns}`, {
-  vpc: vpcStack.vpc,
-});
+const bastionHostStack = new BastionHostStack(
+  app,
+  `${Config.Ns}BastionHostStack`,
+  {
+    vpc: vpcStack.vpc,
+    ingressCIDR: Config.IngressCIDR,
+  }
+);
 bastionHostStack.addDependency(vpcStack);
 
-const rdsStack = new RdsStack(app, `RdsStack${ns}`, {
+const dbStack = new RdsStack(app, `${Config.Ns}DbStack`, {
   vpc: vpcStack.vpc,
+  defaultDatabaseName: Config.DatabaseName,
 });
-rdsStack.addDependency(vpcStack);
+dbStack.addDependency(vpcStack);

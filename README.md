@@ -7,38 +7,54 @@ This repository is for tutorial of RDS tunneling with AWS BastionHost.
 # Prerequisites
 
 - awscli
-- Nodejs 10.20+
+- Nodejs 16
 - AWS Account and Locally configured AWS credential
 
-# Installation
+## Setup awscli
 
-Install project dependencies
+in this case, you set your AWSCLI profile to `skt`.
+
+```bash
+$ aws configure --profile skt
+AWS Access Key ID [****************NCHZ]:
+AWS Secret Access Key [****************AwoB]:
+Default region name [us-east-1]:
+Default output format [json]:
+```
+
+## Install dependencies
 
 ```bash
 $ cd infra
+$ npm i -g aws-cdk@2.44
 $ npm i
 ```
 
-Install cdk in global context and run `cdk init` if you did not initailize cdk yet.
+## Configuration
+
+open [**infra/env/dev.env**](/infra/env/dev.env) and fill the blow fields
+
+- `AWS_ACCOUNT_ID`: 12 digit account id
+- `VPC_ID`: vpc id
+- `INGRESS_CIDR`: ip address for bastion-host. e.g. 127.0.0.1/32
+- `DATABASE_NAME`: mysql default database name e.g. 'my_database'
+
+and copy `env/dev.env` file to project root as `.env`
 
 ```bash
-$ npm i -g cdk
-$ cdk init
+$ cd infra
+$ cp env/dev.env .env
+```
+
+## Deploy for dev
+
+if you never run bootstrap on the account, bootstrap it.
+
+```bash
 $ cdk bootstrap
 ```
 
-Replace allowing *ingressCIDR* with your public CIDR block at [**bin/infra.ts**](bin/infra.ts)
-
-```typescript
-const app = new cdk.App({
-  context: {
-    ns,
-    ingressCIDR: '211.193.59.247/32', <-- replace it.
-  },
-});
-```
-
-Deploy CDK Stacks on AWS
+deploy infrastructure
 
 ```bash
 $ cdk deploy "*" --require-approval never
@@ -51,11 +67,10 @@ Connection chain goes like this...
 [RDS] <====> [BastionHost] <====> [Localhost]
 [5432] <====> [5432:8888] <====> [8888:5432]
 
-
 ## Install Socat and portforward RDS with it on BastionHost
 
-Visit CloudFormation console and click *BastionHostStackAlpha -> Output*
-copy value of *BastionHostAlphaBastionHostIdxxx*.
+Visit CloudFormation console and click _BastionHostStackAlpha -> Output_
+copy value of _BastionHostAlphaBastionHostIdxxx_.
 It is instance-id of Bastionhost.
 
 Connect to instance via ssm.
@@ -66,10 +81,10 @@ $ aws ssm start-session --target YOUR_INSTANCE_ID
 sh-4.2$
 ```
 
-Visit CloudFormation console and click *RdsStackAlpha -> Output*
-copy value of key *RdsClusterUrlAlpha*. It is cluster endpoint url of RDS.
+Visit CloudFormation console and click _RdsStackAlpha -> Output_
+copy value of key _RdsClusterUrlAlpha_. It is cluster endpoint url of RDS.
 
-Install *Socat* to portforward *RDS:5432* to *localhost:8888*
+Install _Socat_ to portforward _RDS:5432_ to _localhost:8888_
 
 ```bash
 $ sudo yum install socat -y
@@ -83,7 +98,7 @@ Now, [RDS] <==> [BastionHost] connection is setted.
 
 ## Local tunneling using SSM portforwarding
 
-In order to make tunnel between [BastionHost] <==> [Localhost], run *scripts/tunnel.sh* on your local machine.
+In order to make tunnel between [BastionHost] <==> [Localhost], run _scripts/tunnel.sh_ on your local machine.
 
 ```bash
 $ ./scripts/tunnel.sh
@@ -97,21 +112,22 @@ Done! [BastionHost] <==> [Localhost] connection is made now.
 
 ### Get RDS connection password
 
-Get your RDS credential from `AWS Secrets Manager` Service. Visit *AWS Secrets Manager* service and click *Retrieve secret value* button.
+Get your RDS credential from `AWS Secrets Manager` Service. Visit _AWS Secrets Manager_ service and click _Retrieve secret value_ button.
 
-*AWS Secrets Manager* is highly secured key-value store.
+_AWS Secrets Manager_ is highly secured key-value store.
 
 By using AWS Secrets Manager, you can get rid of hardcoded RDS related information from your code.
 
 ### Connect to RDS through localhost:5432
 
-connect to *localhost:5432* with your preferred pgdb client, like PgAdmin4, DBeaver.
+connect to _localhost:5432_ with your preferred pgdb client, like PgAdmin4, DBeaver.
 
-> If you are using DBeaver, you should turn off the settings `Open separate connection for metadata read` at *DBeaver -> Metadata* menu.
-> and turn off the settings `Open separate conneciton for each editor` at *DBeaver -> SQL Editor* menu.
+> If you are using DBeaver, you should turn off the settings `Open separate connection for metadata read` at _DBeaver -> Metadata_ menu.
+> and turn off the settings `Open separate conneciton for each editor` at _DBeaver -> SQL Editor_ menu.
 > AWS SSM connection does not support multi connection which means that only one person can connect to RDS via SSM at the same time.
 
 Install dependencies for sample app.
+
 ```bash
 $ pip install psycopg2-binary boto3 -U
 ```
