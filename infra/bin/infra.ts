@@ -27,3 +27,9 @@ const dbStack = new RdsStack(app, `${Config.Ns}DbStack`, {
   defaultDatabaseName: Config.DatabaseName,
 });
 dbStack.addDependency(vpcStack);
+
+const tags = cdk.Tags.of(app);
+tags.add(`namespace`, Config.Ns);
+tags.add(`stage`, Config.Stage);
+
+app.synth();
