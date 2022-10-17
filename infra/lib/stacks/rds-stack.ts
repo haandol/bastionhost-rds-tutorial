@@ -33,7 +33,7 @@ export class RdsStack extends Stack {
         version: rds.AuroraMysqlEngineVersion.VER_3_02_0,
       }),
     });
-    parameterGroup.addParameter('sort_buffer_size', '4194304'); // 4MB
+    parameterGroup.addParameter('sort_buffer_size', '2097152'); // 2MB
 
     if (props.enableBinlog) {
       parameterGroup.addParameter('binlog_format', 'ROW');
