@@ -1,4 +1,4 @@
-import { Stack, StackProps, RemovalPolicy } from 'aws-cdk-lib';
+import { Stack, StackProps, RemovalPolicy, CfnOutput } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as rds from 'aws-cdk-lib/aws-rds';
@@ -18,13 +18,24 @@ export class RdsStack extends Stack {
   constructor(scope: Construct, id: string, props: IProps) {
     super(scope, id);
 
-    this.securityGroup = new ec2.SecurityGroup(this, 'MySQLSecurityGroup', {
-      vpc: props.vpc,
-    });
-    this.cluster = this.createCluster(props, this.securityGroup);
+    this.securityGroup = this.newSecurityGroup(props);
+    this.cluster = this.newCluster(props, this.securityGroup);
   }
 
-  createCluster(
+  newSecurityGroup(props: IProps): ec2.ISecurityGroup {
+    const securityGroup = new ec2.SecurityGroup(this, 'MySQLSecurityGroup', {
+      vpc: props.vpc,
+    });
+
+    new CfnOutput(this, 'RdsSecurityGroup', {
+      exportName: `${Config.Ns}RdsSecurityGroup`,
+      value: securityGroup.securityGroupId,
+    });
+
+    return securityGroup;
+  }
+
+  newCluster(
     props: IProps,
     securityGroup: ec2.ISecurityGroup
   ): rds.DatabaseCluster {
