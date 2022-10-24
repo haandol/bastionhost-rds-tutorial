@@ -36,7 +36,6 @@ open [**infra/env/dev.env**](/infra/env/dev.env) and fill the blow fields
 
 - `AWS_ACCOUNT_ID`: 12 digit account id
 - `VPC_ID`: vpc id
-- `INGRESS_CIDR`: ip address for bastion-host. e.g. 127.0.0.1/32
 - `DATABASE_NAME`: mysql default database name e.g. 'my_database'
 
 and copy `env/dev.env` file to project root as `.env`

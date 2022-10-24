@@ -5,7 +5,6 @@ import { Config } from '../configs/loader';
 
 interface IProps extends StackProps {
   vpc: ec2.IVpc;
-  ingressCIDR: string;
   securityGroup: ec2.ISecurityGroup;
 }
 

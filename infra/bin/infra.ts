@@ -28,7 +28,6 @@ const bastionHostStack = new BastionHostStack(
   `${Config.Ns}BastionHostStack`,
   {
     vpc: vpcStack.vpc,
-    ingressCIDR: Config.IngressCIDR,
     securityGroup: dbStack.securityGroup,
   }
 );
