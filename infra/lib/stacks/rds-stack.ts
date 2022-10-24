@@ -22,7 +22,7 @@ export class RdsStack extends Stack {
     this.cluster = this.newCluster(props, this.securityGroup);
   }
 
-  newSecurityGroup(props: IProps): ec2.ISecurityGroup {
+  newSecurityGroup(props: IProps): ec2.SecurityGroup {
     const securityGroup = new ec2.SecurityGroup(this, 'MySQLSecurityGroup', {
       vpc: props.vpc,
     });
@@ -73,6 +73,12 @@ export class RdsStack extends Stack {
     });
     cluster.addRotationSingleUser();
     cluster.connections.allowDefaultPortFrom(securityGroup);
+
+    new CfnOutput(this, 'RdsSecrets', {
+      exportName: `${Config.Ns}RdsSecrets`,
+      value: cluster.secret?.secretArn || '',
+    });
+
     return cluster;
   }
 }
