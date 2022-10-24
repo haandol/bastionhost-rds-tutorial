@@ -18,27 +18,16 @@ export class RdsStack extends Stack {
   constructor(scope: Construct, id: string, props: IProps) {
     super(scope, id);
 
-    this.securityGroup = this.newSecurityGroup(props);
-    this.cluster = this.newCluster(props, this.securityGroup);
-  }
-
-  newSecurityGroup(props: IProps): ec2.SecurityGroup {
-    const securityGroup = new ec2.SecurityGroup(this, 'MySQLSecurityGroup', {
-      vpc: props.vpc,
-    });
+    this.cluster = this.newCluster(props);
+    this.securityGroup = this.cluster.connections.securityGroups[0];
 
     new CfnOutput(this, 'RdsSecurityGroupOutput', {
       exportName: `${Config.Ns}RdsSecurityGroup`,
-      value: securityGroup.securityGroupId,
+      value: this.securityGroup.securityGroupId,
     });
-
-    return securityGroup;
   }
 
-  newCluster(
-    props: IProps,
-    securityGroup: ec2.ISecurityGroup
-  ): rds.DatabaseCluster {
+  newCluster(props: IProps): rds.DatabaseCluster {
     const parameterGroup = new rds.ParameterGroup(this, 'MySQLParameterGroup', {
       engine: rds.DatabaseClusterEngine.auroraMysql({
         version: rds.AuroraMysqlEngineVersion.VER_3_02_0,
@@ -72,7 +61,6 @@ export class RdsStack extends Stack {
       cloudwatchLogsRetention: logs.RetentionDays.SIX_MONTHS,
     });
     cluster.addRotationSingleUser();
-    cluster.connections.allowDefaultPortFrom(securityGroup);
 
     new CfnOutput(this, 'RdsSecretsOutput', {
       exportName: `${Config.Ns}RdsSecrets`,
