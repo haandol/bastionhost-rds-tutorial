@@ -27,7 +27,7 @@ export class RdsStack extends Stack {
       vpc: props.vpc,
     });
 
-    new CfnOutput(this, 'RdsSecurityGroup', {
+    new CfnOutput(this, 'RdsSecurityGroupOutput', {
       exportName: `${Config.Ns}RdsSecurityGroup`,
       value: securityGroup.securityGroupId,
     });
@@ -74,7 +74,7 @@ export class RdsStack extends Stack {
     cluster.addRotationSingleUser();
     cluster.connections.allowDefaultPortFrom(securityGroup);
 
-    new CfnOutput(this, 'RdsSecrets', {
+    new CfnOutput(this, 'RdsSecretsOutput', {
       exportName: `${Config.Ns}RdsSecrets`,
       value: cluster.secret?.secretArn || '',
     });
