@@ -50,7 +50,7 @@ export class RdsStack extends Stack {
         vpc: props.vpc,
         vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
         instanceType: ec2.InstanceType.of(
-          ec2.InstanceClass.R5,
+          ec2.InstanceClass.R6G,
           ec2.InstanceSize.XLARGE
         ),
       },
