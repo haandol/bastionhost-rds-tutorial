@@ -30,7 +30,7 @@ export class RdsStack extends Stack {
   newCluster(props: IProps): rds.DatabaseCluster {
     const parameterGroup = new rds.ParameterGroup(this, 'MySQLParameterGroup', {
       engine: rds.DatabaseClusterEngine.auroraMysql({
-        version: rds.AuroraMysqlEngineVersion.VER_3_02_0,
+        version: rds.AuroraMysqlEngineVersion.VER_3_02_1,
       }),
     });
     parameterGroup.addParameter('sort_buffer_size', '2097152'); // 2MB
@@ -43,7 +43,7 @@ export class RdsStack extends Stack {
 
     const cluster = new rds.DatabaseCluster(this, `${Config.Ns}RdsCluster`, {
       engine: rds.DatabaseClusterEngine.auroraMysql({
-        version: rds.AuroraMysqlEngineVersion.VER_3_02_0,
+        version: rds.AuroraMysqlEngineVersion.VER_3_02_1,
       }),
       storageEncrypted: true,
       instanceProps: {
@@ -58,7 +58,7 @@ export class RdsStack extends Stack {
       clusterIdentifier: `${Config.Ns}RdsCluster`,
       removalPolicy: RemovalPolicy.DESTROY,
       parameterGroup,
-      cloudwatchLogsRetention: logs.RetentionDays.SIX_MONTHS,
+      cloudwatchLogsRetention: logs.RetentionDays.THREE_MONTHS,
     });
     cluster.addRotationSingleUser();
 
