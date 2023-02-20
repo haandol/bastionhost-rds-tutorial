@@ -26,7 +26,7 @@ Default output format [json]:
 
 ```bash
 $ cd infra
-$ npm i -g aws-cdk@2.44
+$ npm i -g aws-cdk@2.65
 $ npm i
 ```
 
