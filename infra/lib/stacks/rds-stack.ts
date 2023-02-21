@@ -61,6 +61,7 @@ export class RdsStack extends Stack {
       cloudwatchLogsRetention: logs.RetentionDays.THREE_MONTHS,
     });
     cluster.addRotationSingleUser();
+    cluster.connections.allowInternally(ec2.Port.tcp(3306), 'self');
 
     new CfnOutput(this, 'RdsSecretsOutput', {
       exportName: `${Config.Ns}RdsSecrets`,

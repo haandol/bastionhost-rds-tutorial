@@ -28,12 +28,12 @@ export class BastionHostStack extends Stack {
           }),
         },
       ],
+      securityGroup: props.securityGroup,
       instanceName: `${Config.Ns}BastionHost`,
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.T3,
         ec2.InstanceSize.MEDIUM
       ),
     });
-    host.connections.addSecurityGroup(props.securityGroup);
   }
 }
